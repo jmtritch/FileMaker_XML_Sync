@@ -25,7 +25,7 @@ It is fairly simple to incorporate the syncing process into your projects, but y
 
 To setup syncing in your system you will need to do the following, and it's best to follow the order:
 
-1. From the XML_Sync.fmp12 file, copy the following tables to your database:
+1. From the XML_Sync.fmp12 file, copy the following tables and associated layouts to your database:
    * SyncLog - Log of syncs (Imports, Exports, Deployments)
    * SyncDetailedLog - Individual actions within a sync
    * DeleteLog - Log of deleted records
