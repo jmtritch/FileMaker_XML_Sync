@@ -1,0 +1,22 @@
+/*
+  ------------------------------------------------------------------------------
+  Purpose: Extracts the data from the xml variable that is between the
+                 <attribute></attribute> tags
+  Author: Andy Knasinski
+  Notes: https://www.briandunning.com/cf/1
+  Parameters:
+         xml - XML formatted data source
+         attribute - Taged content within the <content></content> fields
+         instance - Instance number of the attribute
+  Data Type Returned:
+         text
+  ------------------------------------------------------------------------------
+*/
+
+Case(
+	IsEmpty ( attribute ) or IsEmpty ( content )  ; "" ;
+
+	"<" & attribute & ">" & content &  "</" & attribute & ">" 
+)
+
+// Original custom function by Andy Knasinski

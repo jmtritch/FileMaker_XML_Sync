@@ -1,0 +1,56 @@
+/*
+  ------------------------------------------------------------------------------
+  Purpose: Converts base64 text to ASCII text
+  Author: J. Michael Tritchler
+  Notes: This function was developed as part of importing and
+              exporting the contents of an ASCII text file stored
+			  in a container field
+  Parameters:
+         text - Base64 text to be converted to ASCII text
+  Data Type Returned:
+         text
+  Variables:
+         $$lineNum - Current line number for reading the base64 text
+         $$ascii - The converted ASCII text
+         ~return - Returns the ASCII text representation of base64 text
+  Depends On:
+         AsciiToBin ( text )
+         BinToBase64 ( text )
+  Revision:
+         Last change: 24/03/2017 by JMT
+         ::
+         24/03/2017 - JMT - Wrote original script
+  ------------------------------------------------------------------------------
+*/
+
+
+Let (
+	[
+		// Update the current line number
+		$$lineNum = $$lineNum + 1;
+
+		// Convert the current line of base64 characters to ASCII and add it to
+		// the existing ASCII text
+		$$ascii = $$ascii & BinToAscii ( Base64ToBin ( GetValue ( text; $$lineNum ) ) ) ;
+
+		// Save the ASCII text as a local variable so that the global
+		// variable can be cleared before exiting the function
+		~return = $$ascii
+	];
+
+		If ( ValueCount ( text ) > $$lineNum ;
+
+			// Convert the next line of base64 text if it exists
+			Base64ToAscii ( text );
+			
+			// Clear the global variables and return the ASCII text
+			// as there is no more text to convert
+			Let(
+				[
+					$$ascii = "" ;
+					$$lineNum = ""
+				];
+					~return
+			)
+		)
+)
