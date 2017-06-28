@@ -1,38 +1,23 @@
-# FileMaker Text File Manipulation
-This set of functions converts between ASCII and base64 encoding.  When you couple these functions with FileMaker's native Base64Decode and Base64Encode functions, you can easily edit text files stored in containers.  I developed these functions specifically to support the iOS version of FileMaker, which does not allow for plugins.  With these functions you can import ASCII text from a file within a container and you can export text from within FileMaker to a text file stored in a container.
+# FileMaker XML Sync
+The attached Filemaker database is an example system that syncs between a master database and deployed offline copies.  It uses a suite of custom functions, scripts and a few tricks within layouts to achieve syncing without the need of plugins.  My office works with rural communities that have limited or no internet access, and this system was developed to sync between iPads collecting data in the field and the master system in our office.
 
-Check out the functions to see how the code works.  I tried to make ensure the code is well commented, but please let me know if you have any questions or comments.
+There are some proprietary systems that are available for purchase, but none of them fit with our particular use case.  So I developed our own syncing system that I believe is fairly easy to adapt to any existing FileMaker system.
 
-## Importing Text
+## The Syncing Process
 
-To import text from a container into a text field you only need a single calculation with two functions:
+Please note that although I am using the word sync, the syncing is really only one way process.  The deployed systems export all updates using an XML file, and the master system imports the XML file and incorporates the changes.
 
-```
-Base64ToAscii ( Base64Encode ( [Container_Name] ) )
-```
+Any updates within the master system are not incorporated into the deployed system.  Instead, after the master system incorporates updates from the deployed systems, it creates a copy of itself, which must then replace the deployed systems.
 
-```Base64Encode``` is a native FileMaker function that converts the file data in the provided container to base64 encoding.  Base64 encoding essentially converts six binary bits to a character.  [Wikipedia](https://en.wikipedia.org/wiki/Base64) has a pretty good article showing how the 6 bits converts to the corresponding character.
+1. The master system creates a copy of itself (Deploy)
+1. The copy is deployed onto remote machine(s) (E.g. computer, iPad, iPhone, etc.)
+1. The master system and remote system(s) are updated independently
+1. The remote system(s) export updates, including new records, updated records, and deleted records, using an XML file
+1. The master system imports the XML file and incorporates these changes
+1. The master system creates a copy of itself
+1. The copy is redeployed onto remote machine(s) to replace the existing copies
+1. The master system and remote system(s) are updated independently
+1. The looping continues...
 
-Now that our data is encoded as base64 text, the custom function ```Base64ToAscii``` converts that text to ASCII text.
+## Incorporating the Syncing Process Into Your Projects
 
-## Exporting Text
-
-To export text from a field to a container you also only need a single calculation with two functions: 
-
-```
-Base64Decode ( AsciiToBase64 ( [Text_Field_Name] ) { ; Optional_file_name } )
-```
-
-```AsciiToBase64``` converts the ASCII text to base64 encoded text.
-
-Now we can use FileMaker's native function, ```Base64Decode``` to converts that data back to true binary and set it in our container.
-
-## Base64ToAscii Function
-
-The ```Base64ToAscii``` function depends on some of the additional functions included in this repository.  Let's dive into the details of how this function works.
-
-### Base64ToBin Function
-
-This function simply loops through all of the base64 characters and converts them to the corresponding text representation each character's the binary value.  Let's look at an example of how this works with the programming classic:
-```Foobar
-F -> 0001
