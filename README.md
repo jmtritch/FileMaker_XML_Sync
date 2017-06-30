@@ -1,5 +1,5 @@
 # FileMaker XML Sync
-The included Filemaker database syncs between a master database and deployed offline copies.  It uses a suite of custom functions, scripts and a few tricks within layouts to achieve syncing without the need of plugins.  My office works with rural communities that have limited or no internet access, and this system was developed to sync between iPads collecting data in the field and the master system in our office.
+The included Filemaker database syncs between a master database and deployed offline copies.  It uses a suite of custom functions, scripts and a few tricks within layouts to achieve syncing without the need of plugins.  My office works with rural communities that have limited or no internet access, and this system was developed to sync between iPads collecting data in the field and the master system in our office.  This project builds on [fileMakerhacks XML Wrap and Unwrap Technique](https://filemakerhacks.com/2014/11/16/the-xml-wrap-and-unwrap-technique/) to include not only adding new records, but also updating existing records and deleting records.
 
 There are some proprietary systems that are available for purchase, but none of them fit with our particular use case.  So I developed our own syncing system that I believe is fairly easy to adapt to any existing FileMaker system.
 
@@ -68,14 +68,14 @@ To setup syncing in your system you will need to do the following, and it's best
 1. Only Delete records using the _Delete and Log Record_ script
    * There needs to be a log of deleted records in order for the sync process to delete records on the master system that were deleted on the remote system(s).
 
-## Export XML
+## How to Sync
 
 More coming...
 
-## Import XML
+### Import XML
 
 More coming...
 
-## Deploy
+### Deploy
 
 More coming...
