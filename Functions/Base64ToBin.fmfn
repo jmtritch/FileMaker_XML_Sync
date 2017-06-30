@@ -1,0 +1,120 @@
+/*
+  ------------------------------------------------------------------------------
+  Purpose: Converts Base64 text to binary text representation of
+                  0's and 1's
+  Author: J. Michael Tritchler
+  Notes: This function was developed as part of importing and
+              exporting the contents of an ASCII text file stored
+			  in a container field
+  Parameters:
+         text - The base64 encoded text to convert to binary
+  Data Type Returned:
+         text
+  Variables:
+         $$curChar - stores the current character to convert to 
+                             binary
+         $$binary - ASCII 0 and 1 representation of the base64 text
+         ~return - Returns the binary representation of base64 text
+  Revision:
+         Last change: 27/09/2015 by JMT
+         ::
+         27/09/2015 - JMT - Wrote original script
+  ------------------------------------------------------------------------------
+*/
+
+Let (
+	[
+		// Extract the current character from the base64 text
+		$$curChar = Left ( text ; 1 );
+
+		// Convert that character to a binary representation and
+		// add it to the end of the already converted binary text
+		$$binary = $$binary & Case ( 
+					Exact ( $$curChar ; "A" ) ; "000000"; 
+					Exact ( $$curChar ; "B" ) ; "000001"; 
+					Exact ( $$curChar ; "C" ) ; "000010"; 
+					Exact ( $$curChar ; "D" ) ; "000011"; 
+					Exact ( $$curChar ; "E" ) ; "000100"; 
+					Exact ( $$curChar ; "F" ) ; "000101"; 
+					Exact ( $$curChar ; "G" ) ; "000110"; 
+					Exact ( $$curChar ; "H" ) ; "000111"; 
+					Exact ( $$curChar ; "I" ) ; "001000"; 
+					Exact ( $$curChar ; "J" ) ; "001001"; 
+					Exact ( $$curChar ; "K" ) ; "001010"; 
+					Exact ( $$curChar ; "L" ) ; "001011"; 
+					Exact ( $$curChar ; "M" ) ; "001100"; 
+					Exact ( $$curChar ; "N" ) ; "001101"; 
+					Exact ( $$curChar ; "O" ) ; "001110"; 
+					Exact ( $$curChar ; "P" ) ; "001111"; 
+					Exact ( $$curChar ; "Q" ) ; "010000"; 
+					Exact ( $$curChar ; "R" ) ; "010001"; 
+					Exact ( $$curChar ; "S" ) ; "010010"; 
+					Exact ( $$curChar ; "T" ) ; "010011"; 
+					Exact ( $$curChar ; "U" ) ; "010100"; 
+					Exact ( $$curChar ; "V" ) ; "010101"; 
+					Exact ( $$curChar ; "W" ) ; "010110"; 
+					Exact ( $$curChar ; "X" ) ; "010111"; 
+					Exact ( $$curChar ; "Y" ) ; "011000"; 
+					Exact ( $$curChar ; "Z" ) ; "011001"; 
+					Exact ( $$curChar ; "a" ) ; "011010"; 
+					Exact ( $$curChar ; "b" ) ; "011011"; 
+					Exact ( $$curChar ; "c" ) ; "011100"; 
+					Exact ( $$curChar ; "d" ) ; "011101"; 
+					Exact ( $$curChar ; "e" ) ; "011110"; 
+					Exact ( $$curChar ; "f" ) ; "011111"; 
+					Exact ( $$curChar ; "g" ) ; "100000"; 
+					Exact ( $$curChar ; "h" ) ; "100001"; 
+					Exact ( $$curChar ; "i" ) ; "100010"; 
+					Exact ( $$curChar ; "j" ) ; "100011"; 
+					Exact ( $$curChar ; "k" ) ; "100100"; 
+					Exact ( $$curChar ; "l" ) ; "100101"; 
+					Exact ( $$curChar ; "m" ) ; "100110"; 
+					Exact ( $$curChar ; "n" ) ; "100111"; 
+					Exact ( $$curChar ; "o" ) ; "101000"; 
+					Exact ( $$curChar ; "p" ) ; "101001"; 
+					Exact ( $$curChar ; "q" ) ; "101010"; 
+					Exact ( $$curChar ; "r" ) ; "101011"; 
+					Exact ( $$curChar ; "s" ) ; "101100"; 
+					Exact ( $$curChar ; "t" ) ; "101101"; 
+					Exact ( $$curChar ; "u" ) ; "101110"; 
+					Exact ( $$curChar ; "v" ) ; "101111"; 
+					Exact ( $$curChar ; "w" ) ; "110000"; 
+					Exact ( $$curChar ; "x" ) ; "110001"; 
+					Exact ( $$curChar ; "y" ) ; "110010"; 
+					Exact ( $$curChar ; "z" ) ; "110011"; 
+					Exact ( $$curChar ; "0" ) ; "110100"; 
+					Exact ( $$curChar ; "1" ) ; "110101"; 
+					Exact ( $$curChar ; "2" ) ; "110110"; 
+					Exact ( $$curChar ; "3" ) ; "110111"; 
+					Exact ( $$curChar ; "4" ) ; "111000"; 
+					Exact ( $$curChar ; "5" ) ; "111001"; 
+					Exact ( $$curChar ; "6" ) ; "111010"; 
+					Exact ( $$curChar ; "7" ) ; "111011"; 
+					Exact ( $$curChar ; "8" ) ; "111100"; 
+					Exact ( $$curChar ; "9" ) ; "111101"; 
+					Exact ( $$curChar ; "+" ) ; "111110"; 
+					Exact ( $$curChar ; "/" ) ; "111111" ;
+					$$curChar = "¶" ; "" ; "" ) ;
+
+		// save the binary text as a local variable so that the global
+		// variable can be cleared before exiting the function
+		~return = $$binary
+	];
+
+		If ( Length ( text ) > 1;
+
+			// Convert the next character in the base64 text if
+			// not at the end of the base64 text
+			Base64ToBin ( Right ( text ; Length ( text ) - 1 ) );
+
+			// Clear the global variables and return the binary text if
+			// there are no more base64 characters to convert
+			Let(
+				[
+					$$curChar = "";
+					$$binary = ""
+				];
+					~return
+			)
+		)
+)

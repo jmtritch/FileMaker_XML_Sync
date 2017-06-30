@@ -1,0 +1,58 @@
+/*
+  ------------------------------------------------------------------------------
+  Purpose: Converts a text of 0's and 1's to ASCII text
+  Author: J. Michael Tritchler
+  Notes: This function was developed as part of importing and
+              exporting the contents of an ASCII text file stored
+              in a container field
+  Parameters:
+         text - The binary text to convert to ASCII text
+  Data Type Returned:
+         text
+  Variables:
+         $$asciiText - ASCII representation of the binary text
+         ~return - Returns the ASCII representation of binary text
+  Depends On:
+         ByteToInt( text )
+  Revision:
+         Last change: 27/09/2015 by JMT
+         ::
+         27/09/2015 - JMT - Wrote original script
+  ------------------------------------------------------------------------------
+*/
+
+Let (
+	[
+
+		// Get the current integer value of the ASCII character from the byte
+		$curInt = ByteToInt ( Left ( text ; 8 ) ) ;
+
+		// Convert the integer value to the corresponding ASCII character
+		// But ignore Carriage Returns that Windows inserts
+		$curChar = If ( $curInt = 13 ; "" ; Char ( $curInt ) ) ;
+
+		// Convert the current byte to ASCII and add it to the end of
+		// the already converted ASCII text
+		$$asciiText = $$asciiText & $curChar;
+
+		// Save the ASCII text as a local variable so that the global
+		// variable can be cleared before exiting the function
+		~return = $$asciiText
+	];
+
+		If ( Length ( text ) > 8;
+
+			// Convert the next 8 bits to ASCII text if not at the end
+			// of the binary text
+			BinToAscii ( Right ( text ; Length( text ) - 8 ) );
+
+			// Clear the global variables and return the ASCII text if
+			// there are no more bytes to convert
+			Let(
+				[
+					$$asciiText = ""
+				];
+					~return
+			)
+		)
+)
