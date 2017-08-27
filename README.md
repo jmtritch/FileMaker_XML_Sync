@@ -22,13 +22,13 @@ There are 5 layouts in the example:
        
 1. SyncLog - Lists the sync sessions
    * No associated button - can only be opened from the Layout dropdown menu
-       ![Sync Log](http://imgur.com/DGtDsg7.png)
+       ![Sync Log](http://imgur.com/RFAJ8ua.png)
        * __Details__ button opens the SyncLogDetails layout and shows the details of the sync
        * __Delete__ button deletes the sync session (and its sync details) and logs it in the __DeleteLog__ table
        
 1. SyncLogDetailed - Lists the detailed sync steps and groups them by sync session
    * Opened with the __Sync__ button in the top menu
-       ![Detailed Sync Log](http://imgur.com/33OcRFq.png)
+       ![Detailed Sync Log](http://imgur.com/ZTrroVx.png)
        * __Export__ button exports records to an XML file, which can be imported into the master database
        * __Import__ button imports records from an XML file, which should be used with the master database
        * __Deploy__ button exports the entire database to be deployed on remote system(s).  This button should be used with the master database
