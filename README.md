@@ -4,7 +4,7 @@ The included Filemaker database syncs between a master database and deployed off
 There are some proprietary systems that are available for purchase, but none of them fit with our particular use case.  So I developed our own syncing system that I believe is fairly easy to adapt to any existing FileMaker database.
 
 ## Example XML_Sync.fmp12
-The example database, XML_Sync.fmp12(https://github.com/jmtritch/FileMaker_XML_Sync/blob/master/XML_Sync.fmp12), demonstrates how the syncing process works using a simple database of Authors and Books.  The __Authors__ table has a one-to-many relationship to the __Books__ table.  i.e. One author can write multiple books.
+The example database, [XML_Sync.fmp12](https://github.com/jmtritch/FileMaker_XML_Sync/blob/master/XML_Sync.fmp12), demonstrates how the syncing process works using a simple database of Authors and Books.  The __Authors__ table has a one-to-many relationship to the __Books__ table.  i.e. One author can write multiple books.
 ### The Layouts
 There are 5 layouts in the example:
 1. Books - Lists the Books
