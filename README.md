@@ -1,11 +1,16 @@
 # FileMaker XML Sync
-The included Filemaker database syncs between a master database and deployed offline copies.  It uses a suite of custom functions, scripts and a few tricks within layouts to achieve syncing without the need of plugins.  My office works with rural communities that have limited or no internet access, and this system was developed to sync between iPads collecting data in the field and the master system in our office.  This project builds on [fileMakerhacks XML Wrap and Unwrap Technique](https://filemakerhacks.com/2014/11/16/the-xml-wrap-and-unwrap-technique/) to include not only adding new records, but also updating existing records and deleting records.
+The included Filemaker database syncs between a master database and deployed offline copies.  It uses a suite of custom functions, scripts and a few tricks within layouts to achieve syncing without the need of plugins.  My office works with rural communities where there is limited or no internet access, and this system was developed to sync between iPads collecting data in the field and the master system in our office.  This project builds on [fileMakerhacks XML Wrap and Unwrap Technique](https://filemakerhacks.com/2014/11/16/the-xml-wrap-and-unwrap-technique/) to include not only adding new records, but also updating existing records and deleting records.
 
 There are some proprietary systems that are available for purchase, but none of them fit with our particular use case.  So I developed our own syncing system that I believe is fairly easy to adapt to any existing FileMaker system.
 
+## Example XML_Sync.fmp12
+Before going through the full syncing process, I let's review the example system that demonstrates how the syncing process works.  This sample is simply a list of books.  It contains an Authors table and a Books table.  The Authors tables has a one-to-many relationship to the Book table.  i.e. One author can write multiple books. (I know that technically a single book can be written by two individuals, but for simplicity let's assume the former.)
+
+![screenshot](http://i.imgur.com/7yAI6mM.png)
+
 ## The Syncing Process
 
-Please note that although I am using the word sync, the syncing is really only one way process.  The deployed systems export all updates using an XML file, and the master system imports the XML file and incorporates the changes.
+Please note that although I am using the word sync, the syncing is really only one way process.  Each deployed system exports all updates using an XML file, and the master system imports that XML file, incorporating the updates.
 
 Any updates within the master database are not synced with the deployed copy(s).  Instead, after the master system incorporates updates from the deployed systems, it creates a copy of itself, which must then replace the deployed systems.  The process:
 
@@ -69,8 +74,8 @@ To setup syncing in your system you will need to do the following, and it's best
    * There needs to be a log of deleted records in order for the sync process to delete records on the master system that were deleted on the remote system(s).
 
 ## How to Sync
-
-More coming...
+This section will detail how to sync between deployed copies and the master database.  To understand the process, we will start the journey on a deployed copy.  We will:
+1. Export the updates to XML, Import the 
 
 ### Import XML
 
