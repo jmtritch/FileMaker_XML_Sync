@@ -87,10 +87,12 @@ Throughout the process the Sync Log shows the user the steps as they happen in r
 
 ### Import XML
 Clicking the __Import__ button in the Sync Layout starts the Import XML script. The script first creates a full backup of the database, and then creates a new Sync Log.  It opens a dialog box for the user to select the XML file to import, and uses the custom functions to extract the XML data from the selected file.  Once the XML data is extracted, it checks that it is formatted correctly.  If everything checks out okay, it clears the delete log.  Now the data can be imported.
+
 The script traverses through the XML data extracting all record data for each table, i.e. anything between `<table_TableName>` and `</table_TableName>`.  It then extracts the field data for each record, i.e. anything between `<record>` and `</record>`.  Finally, it extracts the field data for the record.
+
 It uses the _id_ field data of the record to search through the master database for a corresponding record.  If there is no existing record in the master database, then it inserts that data as a new record.  If it finds a corresponding record, it checks the modified timestamp, _modTS_, of both the XML record and the master database record.  If the XML record is newer, then it updates the existing record with the XML data.  If the XML record is older, then it ignores the XML data.
-After importing all the XML records, it then deletes the corresponding records that were imported into the DeleteLog.
-Throughout the process the Sync Log shows the user the steps as they happen in real time.
+
+After importing all the XML records, it then deletes the corresponding records listed in the DeleteLog.  Throughout the process the Sync Log shows the user the steps as they happen in real time.
 
 ### Deploy
 Clicking the __Deploy__ button in the Sync Layout starts the Deploy Database script.  The script first creates a full backup of the database, and then creates a new Sync Log.  It clears the delete log, and resets the LASTSYNC global field in the SyncLog table to the current timestamp.  It then saves a compacted copy of the database to the same folder of the master database using the name `DatabaseFileName_Deployed_YY-MM-DD.fmp12`.  Throughout the process the Sync Log shows the user the steps as they happen in real time.
@@ -103,7 +105,6 @@ The __Sync Properties__ popup is used to set various properties of the sync proc
 * The _Include Global Fields_ is a checkbox the toggles whether the Import/Exprot XML processes should include global fields.
 
 ## Incorporating the Syncing Process Into Your Projects
-
 It is fairly simple to incorporate the syncing process into your projects, but you will need a copy of FileMaker Pro Advanced since you will need to copy some custom functions.
 
 To setup syncing in your database you will need to do the following, and it's best to follow the order:
