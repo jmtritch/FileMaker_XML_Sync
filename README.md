@@ -41,6 +41,11 @@ There are 5 layouts in the example:
        ![Delete Log](http://imgur.com/kz5JGrL.png)
        * __Clear__ deletes all records in the __DeleteLog__ table
 
+1. ImportXml - Table to temporarily store the contents of the imported XML file for syncing
+   * No associated button - can only be opened from the Layout dropdown menu
+       ![Delete Log](https://imgur.com/96y1GDS.png)
+
+
 ## The Syncing Process
 
 Please note that although I am using the word sync, the syncing is really only one way process.  Each deployed database exports all updates using an XML file, and the master database imports that XML file, incorporating the updates.
@@ -61,7 +66,7 @@ Updates performed directly on the master database should not be synced with the 
 This section will detail how to sync between deployed copies and the master database.  There are three parts of the syncing process: Export, Import, and Deploy
 
 ### Export XML
-Clicking the __Export__ button in the Sync Layout starts the Export XML script. It creates a new Sync Log.  It then searches through all of the database and selects any records with a modified timestamp (_modTS_ field) that is newer than the Global LASTSYNC field in the SyncLog table.  This includes records that have been updated, inserted, or deleted (as listed in the DeleteLog table).  When it finds a record to be exported it wraps it in XML using the following format:
+Clicking the __Export__ button in the Sync Layout starts the Export XML script. It creates a new Sync Log.  It then searches through all tables and records in the database (Excluding those listed in the Global IGNORETABLES field) and selects any records with a modified timestamp (_modTS_ field) that is newer than the Global LASTSYNC field in the SyncLog table.  This includes records that have been updated, inserted, or deleted (as listed in the DeleteLog table).  When it finds a record to be exported it wraps it in XML using the following format:
 
 ```
 <table_TableName>
@@ -82,13 +87,16 @@ Clicking the __Export__ button in the Sync Layout starts the Export XML script. 
 ...
 </table_TableNameN>
 ```
-As it moves through the database wrapping records in XML, the SyncLog stores the number of records updated or inserted for each table.  When it finishes it stores the XML data into the _xmlData_ field of the SyncLog.  It then uses the custom functions to write the XML data to a text file, that is stored in the _xmlFile_ field of the SyncLog.  The user can then export this XML file and send it to the master database using email, a web upload, or whatever method you choose.
+As it moves through the database wrapping records in XML, the SyncLog stores the number of records updated, inserted or ignored for each table.  When it finishes it stores the XML data into the _xmlData_ field of the SyncLog.  It then writes the XML data to a text file.  To write the XML data to a file the database uses the `Export Field Contents[]` script step and then imports the newly created XML file into the _xmlFile_ container field of the SyncLog.  The user can then export this XML file and send it to the master database using email, a web upload, or whatever method you choose.
+
 Throughout the process the Sync Log shows the user the steps as they happen in real time.
 
 ### Import XML
-Clicking the __Import__ button in the Sync Layout starts the Import XML script. The script first creates a full backup of the database, and then creates a new Sync Log.  It opens a dialog box for the user to select the XML file to import, and uses the custom functions to extract the XML data from the selected file.  Once the XML data is extracted, it checks that it is formatted correctly.  If everything checks out okay, it clears the delete log.  Now the data can be imported.
+Clicking the __Import__ button in the Sync Layout starts the Import XML script. The script first creates a full backup of the database, and then creates a new Sync Log.  It opens a dialog box for the user to select the XML file to import and reads the XML data from the selected file.  To read the data from the imported XML file the database uses a few tricks.  The file is exported using the `Export Field Contents[]` script step.  Then the contents of the XML file are imported into the __ImportXml__ table line by line using the `Import Records []` script step.  These records are then combined back into a single field/variable.
 
-The script traverses through the XML data extracting all record data for each table, i.e. anything between `<table_TableName>` and `</table_TableName>`.  It then extracts the field data for each record, i.e. anything between `<record>` and `</record>`.  Finally, it extracts the field data for the record.
+Once the XML data is extracted, it checks that it is formatted correctly.  After passing the checks, it clears the delete log.  Now the data is imported.
+
+The script traverses through the XML data extracting all records for each table, i.e. anything between `<table_TableName>` and `</table_TableName>`.  It then extracts the field data for each record, i.e. anything between `<record>` and `</record>`.  Finally, it extracts the field data for the record.
 
 It uses the _id_ field data of the record to search through the master database for a corresponding record.  If there is no existing record in the master database, then it inserts that data as a new record.  If it finds a corresponding record, it checks the modified timestamp, _modTS_, of both the XML record and the master database record.  If the XML record is newer, then it updates the existing record with the XML data.  If the XML record is older, then it ignores the XML data.
 
@@ -113,26 +121,17 @@ To setup syncing in your database you will need to do the following, and it's be
    * SyncLog - Log of syncs (Imports, Exports, Deployments)
    * SyncDetailedLog - Individual actions within a sync
    * DeleteLog - Log of deleted records
-1. Copy all of the custom functions from XML_Sync.fmp12
-   * AsciiToBase64 - Converts ASCII text to Base64 text
-      * AssiiToBin - Converts ASCII text to binary text
-      * BinToBase64 - Converts binary text to Base64 text
-   * Base64ToAscii - Converts Base64 text to ASCII text
-      * Base64ToBin - Converts Base64 text to binary text
-      * BinToAscii - Converts binary text to ASCII text
-         * ByteToInt - Converts binary byte (Set of eight 1s and 0s) to integer
-   * ExtractXML - Extracts data between XML tags
-   * PassXML - Creates XML tag with corresponding data
+1. Copy both of the custom functions from XML_Sync.fmp12
+   * ExtractXML - Extracts content between XML tags
+   * PassXML - Creates XML tag with content
 1. Copy all of the scripts in the __Sync__ folder from XML_Sync.fmp12
    * __Import__ folder
       * Import XML - Imports updates from the selected XML encoded data file
-         * _Base64 To ASCII_ - Converts a Base64 text to ASCII text
          * _Import XML Records for Single Table_ - Imports XML encoded record updates into a single table
             * _Import XML Single XML Record_ - Imports a single XML encoded record update
          * _Delete Records Listed in Delete Log_ - Self explanatory
    * __Export__ folder
-      * _Export XML_ - Exports XML formatted new, updated and deleted records into a file\
-         * _ASCII To Base64_ - Converts ASCII text to Base64 text
+      * _Export XML_ - Exports XML formatted new, updated and deleted records into an XML file
    * __Deploy__ folder
       * _Deploy Database_ - Creates a copy of the database using the current date for deploying on remote computers/iPads
    * __SyncLog__ folder
@@ -140,15 +139,15 @@ To setup syncing in your database you will need to do the following, and it's be
       * _Delete Sync Log_ - Deletes the SyncLog when the Delete button is clicked in the DetailedSyncLog layout
       * _Log Sync Action_ - Logs a sync action to the DetailedSyncLog table
    * _Delete and Log Record_ - Delete a record and logs it to the DeleteLog
-1. Add a field named _id_ of type _Text_ to __all__ tables
+1. Add a field named _id_ of type _Text_ to __all__ of your existing tables
    * Set this field value automatically using Auto-Enter --> Calculation --> `Get ( UUID )` function
    * Ensure that you set a value of the _id_ field for all existing records
-1. Add a field named _modTS_ of type _Timestamp_ to __all__ tables
+1. Add a field named _modTS_ of type _Timestamp_ to __all__ of your existing tables
    * Set automatically using the Auto-Enter --> Modification --> "Timestamp (Date and Time)"
    * Ensure that you set a value for all existing records
 1. All tables need a layout with the same name as the table name.
 1. All table layouts also need to include the _id_ field
    * The _id_ field in the layout must have Find Mode __checked__ and Browse Mode __unchecked__ within Inspector --> Data --> Field Entry.  This ensures that the _Quick Find_ script steps work when importing and exporting, while also preventing the user from changing the _id_.
 1. Only Delete records using the _Delete and Log Record_ script
-   * There needs to be a log of deleted records in order for the sync process to delete records on the master database that were deleted on the remote database(s).
+   * There needs to be a log of deleted records in order for the sync process to delete records in the master database that were deleted on the deployed database(s).
 
