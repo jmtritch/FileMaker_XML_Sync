@@ -43,7 +43,7 @@ There are 5 layouts in the example:
 
 1. ImportXml - Table to temporarily store the contents of the imported XML file for syncing
    * No associated button - can only be opened from the Layout dropdown menu
-       ![Delete Log](https://imgur.com/96y1GDS.png)
+       ![Delete Log](https://imgur.com/cy7peCa.png)
 
 
 ## The Syncing Process
