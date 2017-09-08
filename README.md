@@ -92,7 +92,7 @@ As it moves through the database wrapping records in XML, the SyncLog stores the
 Throughout the process the Sync Log shows the user the steps as they happen in real time.
 
 ### Import XML
-Clicking the __Import__ button in the Sync Layout starts the Import XML script. The script first creates a full backup of the database, and then creates a new Sync Log.  It opens a dialog box for the user to select the XML file to import and reads the XML data from the selected file.  To read the data from the imported XML file the database uses a few tricks.  The file is exported using the `Export Field Contents[]` script step.  Then the contents of the XML file are imported into the __ImportXml__ table line by line using the `Import Records []` script step.  These records are then combined back into a single field/variable.
+Clicking the __Import__ button in the Sync Layout starts the Import XML script. The script first creates a full backup of the database, and then creates a new Sync Log.  It opens a dialog box for the user to select the XML file to import and reads the XML data from the selected file.  To read the data from the imported XML file the database uses a few tricks.  The file is exported using the `Export Field Contents[]` script step.  Then the contents of the XML file are imported into the __ImportXml__ table line by line using the `Import Records[]` script step.  These records are then combined back into a single field/variable.
 
 Once the XML data is extracted, it checks that it is formatted correctly.  After passing the checks, it clears the delete log.  Now the data is imported.
 
